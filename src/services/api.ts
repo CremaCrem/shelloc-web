@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useAppStore } from '../store/useAppStore';
 
-// Default base URL for local backend
-export const API_BASE_URL = 'http://localhost:8000/api';
+// Default base URL for local backend, override with env var in production
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,

@@ -16,7 +16,7 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   activeRobotId: 'SHELLOC-01',
   setActiveRobotId: (id: string) => set({ activeRobotId: id }),
-  apiBaseUrl: 'http://localhost:8000/api',
+  apiBaseUrl: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
   setApiBaseUrl: (url: string) => set({ apiBaseUrl: url }),
   isDemoMode: false,
   setIsDemoMode: (isDemo: boolean) => set({ isDemoMode: isDemo }),
