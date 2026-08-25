@@ -1,0 +1,40 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --color-background: #0B111E;
+  --color-surface: #151F32;
+  --color-surface-elevated: #1E293B;
+  --color-surface-border: #23334E;
+  --color-surface-hover: #223354;
+  
+  --color-ink: #F8FAFC;
+  --color-ink-muted: #94A3B8;
+  --color-ink-subtle: #64748B;
+  --color-ink-dark: #0B111E;
+  
+  --color-brand: #00F2FE;
+  --color-brand-dark: #0284C7;
+  --color-brand-muted: rgba(0, 242, 254, 0.15);
+  
+  --color-leaf: #10B981;
+  --color-leaf-dark: #059669;
+  --color-leaf-muted: rgba(16, 185, 129, 0.15);
+  
+  --color-danger: #EF4444;
+  --color-danger-dark: #DC2626;
+  --color-danger-muted: rgba(239, 68, 68, 0.15);
+  
+  --color-amber: #F59E0B;
+  --color-amber-dark: #D97706;
+  --color-amber-muted: rgba(245, 158, 11, 0.15);
+  
+  --font-sans: "Inter", "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-ink font-sans antialiased;
+  }
+}
