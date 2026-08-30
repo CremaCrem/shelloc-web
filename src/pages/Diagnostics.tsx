@@ -19,6 +19,8 @@ import { Card } from '../components/core/Card';
 import { Badge } from '../components/core/Badge';
 import { Button } from '../components/core/Button';
 import { StatCard } from '../components/domain/StatCard';
+import { BuoyancyAlert } from '../components/domain/BuoyancyAlert';
+import { AdaptiveRemediationBadge } from '../components/domain/AdaptiveRemediationBadge';
 import { useTelemetry } from '../hooks/useTelemetry';
 import { useWaypoints } from '../hooks/useWaypoints';
 import { useDispatchRobot } from '../hooks/useDispatch';
@@ -110,6 +112,8 @@ export function Diagnostics() {
           <Sliders size={20} color="#00F2FE" />
         </button>
       </div>
+
+      <BuoyancyAlert isVisible={statusData?.overall_status === 'buoyancy_failsafe' || statusData?.buoyancy_failsafe_active === true} />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
         
@@ -280,11 +284,19 @@ export function Diagnostics() {
                   {selectedWaypoint.latitude.toFixed(6)}° N, {selectedWaypoint.longitude.toFixed(6)}° E
                 </Typography>
               </div>
-              <Badge
-                label={selectedWaypoint.treated ? 'REMEDIATED' : 'UNTREATED'}
-                status={selectedWaypoint.treated ? 'leaf' : 'amber'}
-                size="md"
-              />
+              <div className="flex flex-col items-end">
+                <Badge
+                  label={selectedWaypoint.treated ? 'REMEDIATED' : 'UNTREATED'}
+                  status={selectedWaypoint.treated ? 'leaf' : 'amber'}
+                  size="md"
+                />
+                <div className="mt-2">
+                  <AdaptiveRemediationBadge 
+                    reagentType="citric_acid" 
+                    isVisible={selectedWaypoint.treated} 
+                  />
+                </div>
+              </div>
             </div>
           ) : (
             <div className="flex items-center justify-center bg-surface p-4 rounded-2xl border border-surface-border h-[76px]">

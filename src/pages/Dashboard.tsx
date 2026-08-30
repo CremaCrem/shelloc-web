@@ -19,6 +19,8 @@ import { Card } from '../components/core/Card';
 import { Badge } from '../components/core/Badge';
 import { Button } from '../components/core/Button';
 import { ProgressRing } from '../components/domain/ProgressRing';
+import { CountdownTimer } from '../components/domain/CountdownTimer';
+import { ReagentGauge } from '../components/domain/ReagentGauge';
 import { useTelemetry } from '../hooks/useTelemetry';
 
 export function Dashboard() {
@@ -196,6 +198,26 @@ export function Dashboard() {
             </Typography>
           </div>
         </Card>
+
+        {/* Reagent Gauge */}
+        <div className="md:col-span-1 lg:col-span-2">
+          <ReagentGauge
+            moringaPercent={statusData?.flocculant_tank_percent ?? 85}
+            citricAcidPercent={statusData?.citric_acid_tank_percent ?? 92}
+            biocharStatus={statusData?.biochar_health_status ?? 'optimal'}
+          />
+        </div>
+
+        {/* Incubation Countdown */}
+        {statusData?.mission_state === 'incubating_15m' && (
+          <div className="md:col-span-1 lg:col-span-2">
+            <CountdownTimer
+              timerRemainingSec={statusData.timer_remaining_sec}
+              isActive={true}
+            />
+          </div>
+        )}
+
       </div>
 
       {/* Quick Action Navigation Bar */}
