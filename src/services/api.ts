@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { useAppStore } from '../store/useAppStore';
+import { toast } from 'sonner';
 
 // Default base URL for local backend, override with env var in production
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 3000,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -30,7 +31,10 @@ apiClient.interceptors.response.use(
     
     const message = error.response?.data?.detail || error.message || 'An unexpected network error occurred.';
     
-    // Instead of react-native-toast-message, just log for web (could be replaced with a Web Toast later)
+    // Display error toast
+    toast.error('API Error', {
+      description: message,
+    });
     console.error('[API Error]', message);
     
     return Promise.reject(error);

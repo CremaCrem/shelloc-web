@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { MapContainer, TileLayer, Marker, Circle as LeafletCircle } from 'react-leaflet';
 import L from 'leaflet';
 import {
@@ -69,8 +70,20 @@ export function Diagnostics() {
 
   const waypoints = waypointsData || [];
   const [selectedPointIndex, setSelectedPointIndex] = useState(0);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const selectedWaypoint = waypoints[selectedPointIndex] || null;
+  const previousMissionState = useRef(statusData?.mission_state);
+
+  useEffect(() => {
+    if (previousMissionState.current && previousMissionState.current !== 'completed' && statusData?.mission_state === 'completed') {
+      setShowSuccessModal(true);
+      setTimeout(() => setShowSuccessModal(false), 4000); // Auto-hide after 4 seconds
+    }
+    previousMissionState.current = statusData?.mission_state;
+  }, [statusData?.mission_state]);
+
+  const isMissionActive = statusData?.mission_state !== 'idle' && statusData?.mission_state !== 'completed';
 
   const getComparativeData = (key: 'turbidity_ntu' | 'ph' | 'dissolved_oxygen', baseline: number) => {
     if (!selectedWaypoint) return { before: baseline, after: baseline, delta: 0 };
@@ -112,6 +125,24 @@ export function Diagnostics() {
           <Sliders size={20} color="#00F2FE" />
         </button>
       </div>
+
+      {isMissionActive && (
+        <div className="bg-brand/10 border border-brand/30 rounded-2xl p-4 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between shadow-lg shadow-brand/5 animate-pulse">
+          <div className="flex items-center">
+            <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center mr-4">
+              <Activity size={20} color="#00F2FE" />
+            </div>
+            <div>
+              <Typography variant="h3" color="ink" className="text-lg font-bold">
+                ACTIVE MISSION PHASE
+              </Typography>
+              <Typography variant="body" color="brand" className="font-mono text-sm uppercase">
+                {statusData?.mission_state?.replace('_', ' ')}
+              </Typography>
+            </div>
+          </div>
+        </div>
+      )}
 
       <BuoyancyAlert isVisible={statusData?.overall_status === 'buoyancy_failsafe' || statusData?.buoyancy_failsafe_active === true} />
 
@@ -373,18 +404,25 @@ export function Diagnostics() {
           <div className="flex flex-col gap-3 mt-auto pt-2">
             <Button
               label={
-                selectedWaypoint
+                isMissionActive
+                  ? `Mission Active: ${statusData?.mission_state?.toUpperCase().replace('_', ' ')}`
+                  : selectedWaypoint
                   ? `Dispatch Vessel to Point ${selectedWaypoint.point_number}`
                   : 'Configure Mission'
               }
               variant="primary"
               size="large"
               icon={Navigation}
-              disabled={!selectedWaypoint}
+              disabled={!selectedWaypoint || isMissionActive}
               onClick={() => {
                 if (selectedWaypoint) {
                   dispatchRobot.mutate(selectedWaypoint.id, {
-                    onSuccess: () => alert(`Dispatched SHELLOC vessel to Point ${selectedWaypoint.point_number}`),
+                    onSuccess: () => {
+                      toast.success(`Dispatched SHELLOC vessel to Point ${selectedWaypoint.point_number}`);
+                    },
+                    onError: (error) => {
+                      // Note: Error is automatically handled by axios interceptor and sonner
+                    }
                   });
                 }
               }}
@@ -400,6 +438,27 @@ export function Diagnostics() {
           </div>
         </div>
       </div>
+
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="bg-surface border border-surface-border p-8 rounded-3xl flex flex-col items-center animate-in zoom-in-95 fade-in duration-300">
+            <div className="w-24 h-24 rounded-full bg-leaf/20 flex items-center justify-center mb-6">
+              <CheckCircle2 size={48} color="#10B981" />
+            </div>
+            <Typography variant="h2" color="ink" className="text-3xl font-bold mb-2 text-center">
+              Point Remediated
+            </Typography>
+            <Typography variant="body" color="inkMuted" className="text-center max-w-xs mb-8">
+              The SHELLOC vessel has successfully completed the adaptive remediation cycle for this waypoint.
+            </Typography>
+            <Button
+              label="Acknowledge"
+              variant="primary"
+              onClick={() => setShowSuccessModal(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

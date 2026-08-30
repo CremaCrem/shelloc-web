@@ -7,6 +7,8 @@ import { Diagnostics } from './pages/Diagnostics';
 import { ActivityLog } from './pages/ActivityLog';
 import { Chat } from './pages/Chat';
 
+import { Toaster } from 'sonner';
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -19,6 +21,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
+      <Toaster position="top-center" theme="dark" richColors />
     </BrowserRouter>
   );
 }
