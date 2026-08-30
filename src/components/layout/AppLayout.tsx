@@ -11,8 +11,7 @@ export function AppLayout() {
   const navItems = [
     { to: '/', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/diagnostics', label: 'Diagnostics', icon: Activity },
-    { to: '/map', label: 'Map', icon: Map },
-    { to: '/treatments', label: 'Treatments', icon: Droplet },
+    { to: '/activity', label: 'Activity Log', icon: Droplet },
     { to: '/chat', label: 'AI Insights', icon: Bot },
   ];
 

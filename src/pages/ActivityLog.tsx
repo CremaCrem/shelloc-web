@@ -5,7 +5,7 @@ import { Card } from '../components/core/Card';
 import { Badge } from '../components/core/Badge';
 import { useTreatments } from '../hooks/useTreatments';
 
-export function Treatments() {
+export function ActivityLog() {
   const { data: treatments, isLoading, isError } = useTreatments();
 
   const formatDate = (dateString: string) => {
@@ -27,7 +27,7 @@ export function Treatments() {
         </div>
         <div>
           <Typography variant="h2" color="ink" className="font-bold text-2xl">
-            Treatment Log
+            Activity Log
           </Typography>
           <Typography variant="caption" color="inkMuted" className="text-sm">
             HISTORICAL REMEDIATION EVENTS
@@ -88,10 +88,20 @@ export function Treatments() {
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
                   <Droplet size={16} color="#00F2FE" className="mr-2" />
-                  <Typography variant="caption" color="inkMuted">Flocculant Dosed</Typography>
+                  <Typography variant="caption" color="inkMuted">Moringa-Chitosan</Typography>
                 </div>
                 <Typography variant="label" color="ink" className="font-mono text-sm">
-                  {treatment.flocculant_dosed_ml} mL
+                  {treatment.moringa_chitosan_ml ?? treatment.flocculant_dosed_ml ?? 0} mL
+                </Typography>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  <Droplet size={16} color="#F59E0B" className="mr-2" />
+                  <Typography variant="caption" color="inkMuted">Citric Acid</Typography>
+                </div>
+                <Typography variant="label" color="ink" className="font-mono text-sm">
+                  {treatment.citric_acid_ml ?? 0} mL
                 </Typography>
               </div>
               
