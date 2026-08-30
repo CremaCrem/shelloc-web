@@ -1,32 +1,41 @@
-# React + TypeScript + Vite
+# SHELLOC Web Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+> **S**mart **H**ydro-**E**nvironmental **L**ocator and C**l**eaner — Desktop Command Center & Web Dashboard
 
-Currently, two official plugins are available:
+React (Vite + TypeScript) web application for the **SHELLOC** autonomous water-remediation robotic vessel. Provides desktop-optimized real-time telemetry HUDs, interactive GIS radar maps, dual-reagent monitoring, and conversational environmental insights powered by **Google Gemini**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🖥️ Unified 4-View Navigation
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The Web Portal organizes all operational capabilities into a **4-view sidebar navigation layout**:
 
-## Expanding the Oxlint configuration
+1. **Home (`/`):** Command Center HUD displaying real-time Turbidity (NTU), pH, TDS (ppm), and Temperature (°C) metrics, Moringa-Chitosan and Citric Acid reservoir levels, 15-minute incubation countdown timer, and buoyancy failsafe alerts.
+2. **Diagnostics (`/diagnostics`):** Consolidated GPS Zone Map with interactive Leaflet radar, waypoint selection chips (`P1`–`P6`), comparative before-vs-after delta stat cards, and comprehensive diagnostics data tables.
+3. **AI Chat (`/chat`):** Grounded conversational remediation assistant powered by Google Gemini (`gemini-3.7-flash`).
+4. **Feedback Display / Activity Log (`/activity` or `/treatments`):** Chronological mission timeline, dual-reagent dispensing audit trails, and treatment event summary tables.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+---
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## 📖 Architecture & Documentation
+
+Detailed technical blueprints are available in the `docs/` folder:
+
+1. **[Architecture Overview](docs/architecture.md)** – Tech stack, layer separation, WebSocket streaming, and state management.
+2. **[Navigation & Routing](docs/navigation-and-routes.md)** – 4-view sidebar hierarchy, desktop layout, and route guards.
+3. **[Component Specifications](docs/component-specs.md)** – Design tokens, 15-minute countdown widget, reagent gauges, and buoyancy alert banner.
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Start Vite development server
+npm run dev
+
+# 3. Build for production
+npm run build
 ```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
