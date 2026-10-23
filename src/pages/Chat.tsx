@@ -2,6 +2,22 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Sparkles, Send, Bot, User, Loader2 } from 'lucide-react';
 import { Typography } from '../components/core/Typography';
 import { useChatHistory, useSendMessage } from '../hooks/useChat';
+import ReactMarkdown, { type Components } from 'react-markdown';
+
+// Tailwind preflight strips list/heading styles, so restore the basics for Gemini's markdown
+const markdownComponents: Components = {
+  p: ({ children }) => <p className="mb-3 last:mb-0">{children}</p>,
+  ul: ({ children }) => <ul className="list-disc pl-6 mb-3 last:mb-0 space-y-1">{children}</ul>,
+  ol: ({ children }) => <ol className="list-decimal pl-6 mb-3 last:mb-0 space-y-1">{children}</ol>,
+  strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
+  h1: ({ children }) => <h3 className="font-bold text-xl mb-2">{children}</h3>,
+  h2: ({ children }) => <h3 className="font-bold text-lg mb-2">{children}</h3>,
+  h3: ({ children }) => <h3 className="font-semibold mb-2">{children}</h3>,
+  code: ({ children }) => <code className="font-mono text-brand bg-black/30 rounded px-1.5 py-0.5 text-[0.9em]">{children}</code>,
+  a: ({ href, children }) => (
+    <a href={href} target="_blank" rel="noreferrer" className="text-brand underline">{children}</a>
+  ),
+};
 
 export function Chat() {
   const { data: chatHistory, isLoading, isError } = useChatHistory();
@@ -20,9 +36,12 @@ export function Chat() {
   const handleSend = () => {
     if (!inputText.trim() || sendMessageMutation.isPending) return;
 
-    sendMessageMutation.mutate(inputText, {
-      onSuccess: () => {
-        setInputText('');
+    const text = inputText;
+    setInputText('');
+    sendMessageMutation.mutate(text, {
+      onError: () => {
+        // Give the message back so the operator doesn't lose it
+        setInputText((current) => current || text);
       },
     });
   };
@@ -91,13 +110,15 @@ export function Chat() {
                         : 'bg-surface-elevated border border-surface-border rounded-tl-sm'
                     }`}
                   >
-                    <Typography
-                      variant="body"
-                      color={isUser ? 'dark' : 'ink'}
-                      className={isUser ? 'font-medium md:text-lg' : 'md:text-lg leading-relaxed'}
-                    >
-                      {msg.message}
-                    </Typography>
+                    {isUser ? (
+                      <Typography variant="body" color="dark" className="font-medium md:text-lg whitespace-pre-wrap">
+                        {msg.message}
+                      </Typography>
+                    ) : (
+                      <Typography as="div" variant="body" color="ink" className="md:text-lg leading-relaxed">
+                        <ReactMarkdown components={markdownComponents}>{msg.message}</ReactMarkdown>
+                      </Typography>
+                    )}
                     <Typography
                       variant="caption"
                       color={isUser ? 'dark' : 'inkSubtle'}
@@ -117,7 +138,19 @@ export function Chat() {
             })
           )}
 
-          {/* Pending indicator when mutation is loading */}
+          {/* Optimistic user message + pending indicator while the reply loads */}
+          {sendMessageMutation.isPending && (
+            <div className="w-full flex justify-end">
+              <div className="max-w-[85%] md:max-w-[75%] rounded-2xl p-5 bg-brand rounded-tr-sm shadow-sm shadow-brand/30">
+                <Typography variant="body" color="dark" className="font-medium md:text-lg whitespace-pre-wrap">
+                  {sendMessageMutation.variables}
+                </Typography>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-surface-elevated border border-brand/40 flex items-center justify-center ml-4 mt-1 shrink-0">
+                <User size={18} color="#00F2FE" />
+              </div>
+            </div>
+          )}
           {sendMessageMutation.isPending && (
             <div className="w-full flex justify-start">
               <div className="w-10 h-10 rounded-full bg-surface-elevated border border-surface-border flex items-center justify-center mr-4 mt-1 shrink-0">

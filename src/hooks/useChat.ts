@@ -17,8 +17,9 @@ export function useSendMessage() {
 
   return useMutation({
     mutationFn: (message: string) => chatService.sendMessage(GUEST_USER_ID, activeRobotId, message),
+    // Returned so the mutation stays pending until the refetched history (with the reply) lands
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['chat-history', GUEST_USER_ID] });
+      return queryClient.invalidateQueries({ queryKey: ['chat-history', GUEST_USER_ID] });
     },
   });
 }
